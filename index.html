@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Pernikahan Dion & Diana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@400;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mint: {
+                            light: '#D1F5E0',
+                            DEFAULT: '#8EDCB5',
+                            dark: '#5DC288',
+                        },
+                        cream: '#FFF9F0',
+                        gold: '#D4AF37',
+                    },
+                    fontFamily: {
+                        'playfair': ['"Playfair Display"', 'serif'],
+                        'dancing': ['"Dancing Script"', 'cursive'],
+                        'sans': ['Montserrat', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            background-color: #FFF9F0; /* cream */
+            font-family: 'Montserrat', sans-serif;
+        }
+        .section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-bg {
+            background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), 
+                        url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%238EDCB5' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        .ornament {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none'%3E%3Cpath d='M50 5C25.1 5 5 25.1 5 50s20.1 45 45 45 45-20.1 45-45S74.9 5 50 5zm0 80c-19.3 0-35-15.7-35-35s15.7-35 35-35 35 15.7 35 35-15.7 35-35 35z' fill='%238EDCB5' fill-opacity='0.3'/%3E%3Cpath d='M50 25c-13.8 0-25 11.2-25 25s11.2 25 25 25 25-11.2 25-25-11.2-25-25-25zm0 40c-8.3 0-15-6.7-15-15s6.7-15 15-15 15 6.7 15 15-6.7 15-15 15z' fill='%238EDCB5' fill-opacity='0.3'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: 0;
+        }
+        .ornament-1 { top: 10%; left: 5%; }
+        .ornament-2 { bottom: 10%; right: 5%; }
+        .gallery-img { transition: transform 0.3s ease; }
+        .gallery-img:hover { transform: scale(1.05); }
+        .tab-active { background-color: #8EDCB5; color: white; } /* mint.DEFAULT */
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background-color: #8EDCB5; /* mint.DEFAULT */
+            color: white;
+            border-radius: 50%;
+            margin: 0 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .animate-fade-in { animation: fadeIn 1.5s ease-in-out; }
+        .animate-slide-up { animation: slideUp 1.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .map-container {
+            height: 300px;
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .flower-decoration { position: absolute; width: 120px; height: 120px; opacity: 0.6; }
+        .flower-top-left { top: -20px; left: -20px; transform: rotate(45deg); }
+        .flower-bottom-right { bottom: -20px; right: -20px; transform: rotate(225deg); }
+        .heart-decoration { position: absolute; width: 40px; height: 40px; opacity: 0.4; }
+        .heart-1 { top: 20%; left: 10%; }
+        .heart-2 { top: 30%; right: 15%; }
+        .heart-3 { bottom: 25%; left: 15%; }
+        .heart-4 { bottom: 15%; right: 10%; }
+    </style>
+</head>
+<body class="bg-cream text-gray-800">
+    <div id="cover" class="fixed inset-0 z-50 bg-mint-light flex flex-col items-center justify-center transition-all duration-1000">
+        <div class="text-center p-6 max-w-md">
+            <h1 class="font-dancing text-4xl mb-4 text-mint-dark">Undangan Pernikahan</h1>
+            <div class="w-32 h-1 bg-mint mx-auto mb-6"></div>
+            <h2 class="font-playfair text-5xl mb-6 text-mint-dark">Dion & Diana</h2>
+            <p class="mb-8 text-gray-700">Kepada Bapak/Ibu/Saudara/i</p>
+            <h3 id="guest-name" class="font-dancing text-3xl mb-8 text-mint-dark">Tamu Undangan</h3>
+            <p class="mb-6 text-gray-700">Kami mengundang Anda untuk menghadiri acara pernikahan kami</p>
+            <button id="open-invitation" class="bg-mint hover:bg-mint-dark text-white font-semibold py-3 px-6 rounded-full transition duration-300 shadow-lg">
+                Buka Undangan
+            </button>
+        </div>
+    </div>
+
+    <div class="hidden" id="main-content">
+        <section id="hero" class="hero-bg min-h-screen flex items-center justify-center relative overflow-hidden section">
+            <div class="ornament ornament-1"></div>
+            <div class="ornament ornament-2"></div>
+            <div class="container mx-auto px-4 text-center z-10">
+                <p class="font-dancing text-2xl text-mint-dark mb-2 animate-fade-in">Undangan Pernikahan</p>
+                <h1 class="font-dancing text-6xl md:text-7xl text-mint-dark mb-6 animate-slide-up">Dion & Diana</h1>
+                <div class="w-32 h-1 bg-mint mx-auto mb-6"></div>
+                <p class="text-lg text-gray-700 mb-8 animate-fade-in">Minggu, 15 Juni 2025</p>
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mb-12">
+                    <a href="#couple" class="bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">Mempelai</a>
+                    <a href="#countdown" class="bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">Hitung Mundur</a>
+                    <a href="#event" class="bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">Acara</a>
+                    <a href="#gallery" class="bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">Galeri</a>
+                    <a href="#gift" class="bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">Kado</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="couple" class="py-20 bg-white section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Mempelai</h2>
+                <div class="w-32 h-1 bg-mint mx-auto mb-12"></div>
+                
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-12 md:space-y-0">
+                    <div class="md:w-1/2 px-4">
+                        <div class="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-mint-light shadow-md">
+                            <svg class="w-full h-full text-mint" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-playfair text-2xl text-mint-dark mb-2">Richo Dion Fathur Rochmi</h3>
+                        <p class="text-gray-600 mb-4">Putra dari</p>
+                        <p class="font-medium text-gray-700">Bapak Rokim & Ibu Sri Utami</p>
+                    </div>
+                    
+                    <div class="font-dancing text-5xl text-mint px-8">&</div>
+                    
+                    <div class="md:w-1/2 px-4">
+                        <div class="w-48 h-48 mx-auto mb-6 rounded-full overflow-hidden border-4 border-mint-light shadow-md">
+                             <svg class="w-full h-full text-mint" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-playfair text-2xl text-mint-dark mb-2">Diana Indah Lestari</h3>
+                        <p class="text-gray-600 mb-4">Putri dari</p>
+                        <p class="font-medium text-gray-700">Bapak Su'in Widodo (Alm.) & Ibu Hartini</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="countdown" class="py-20 bg-mint-light section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Menuju Hari Bahagia</h2>
+                <div class="w-32 h-1 bg-mint mx-auto mb-12"></div>
+                
+                <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-xl p-10 relative">
+                    <svg class="flower-decoration flower-top-left" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50,0 C60,15 85,15 100,25 C85,35 60,35 50,50 C40,35 15,35 0,25 C15,15 40,15 50,0" fill="#8EDCB5" /></svg>
+                    <svg class="flower-decoration flower-bottom-right" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50,0 C60,15 85,15 100,25 C85,35 60,35 50,50 C40,35 15,35 0,25 C15,15 40,15 50,0" fill="#8EDCB5" /></svg>
+                    
+                    <p class="text-xl text-gray-700 mb-8">Minggu, 15 Juni 2025</p>
+                    
+                    <div class="flex justify-center flex-wrap">
+                        <div class="countdown-item m-2"><span id="days" class="text-2xl font-bold">00</span><span class="text-xs">Hari</span></div>
+                        <div class="countdown-item m-2"><span id="hours" class="text-2xl font-bold">00</span><span class="text-xs">Jam</span></div>
+                        <div class="countdown-item m-2"><span id="minutes" class="text-2xl font-bold">00</span><span class="text-xs">Menit</span></div>
+                        <div class="countdown-item m-2"><span id="seconds" class="text-2xl font-bold">00</span><span class="text-xs">Detik</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="event" class="py-20 bg-white section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Acara Pernikahan</h2>
+                <div class="w-32 h-1 bg-mint mx-auto mb-12"></div>
+                
+                <div class="bg-mint-light rounded-lg shadow-xl p-8 mb-12 max-w-2xl mx-auto">
+                    <h3 class="font-playfair text-2xl text-mint-dark mb-4">Akad Nikah</h3>
+                    <div class="flex flex-col md:flex-row justify-center items-center mb-6 text-gray-700">
+                        <div class="md:w-1/2 mb-4 md:mb-0 md:border-r md:border-mint md:pr-4">
+                            <div class="flex items-center justify-center mb-2">
+                                <svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                                <span>Minggu, 15 Juni 2025</span>
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                                <span>09.00 WIB</span>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 md:pl-4">
+                            <div class="flex items-center justify-center">
+                                <svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                                <span>Dsn. Wringinanom, Ds. Lopang, Kec. Kembangbahu, Kab. Lamongan</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="max-w-2xl mx-auto">
+                    <div class="flex mb-4 rounded-lg overflow-hidden shadow">
+                        <button id="tab-day1" class="tab-active flex-1 py-3 px-4 font-medium transition duration-300 focus:outline-none">Resepsi Hari 1</button>
+                        <button id="tab-day2" class="bg-gray-100 text-gray-700 flex-1 py-3 px-4 font-medium transition duration-300 focus:outline-none">Resepsi Hari 2</button>
+                    </div>
+                    
+                    <div id="content-day1" class="bg-white rounded-lg shadow-xl p-8 text-gray-700">
+                        <h3 class="font-playfair text-2xl text-mint-dark mb-4">Resepsi Hari Pertama</h3>
+                        <div class="mb-6">
+                            <div class="flex items-center justify-center mb-2"><svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg><span>Minggu, 15 Juni 2025</span></div>
+                            <div class="flex items-center justify-center mb-2"><svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg><span>Siang - Malam</span></div>
+                            <div class="flex items-center justify-center mb-4"><svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg><span>Dsn. Wringinanom, Ds. Lopang, Kec. Kembangbahu</span></div>
+                        </div>
+                        <div id="map1" class="map-container mb-4"></div>
+                        <a href="#" id="maps-link1" target="_blank" class="inline-block bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">
+                            <div class="flex items-center"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Buka di Maps</div>
+                        </a>
+                    </div>
+                    
+                    <div id="content-day2" class="bg-white rounded-lg shadow-xl p-8 hidden text-gray-700">
+                        <h3 class="font-playfair text-2xl text-mint-dark mb-4">Resepsi Hari Kedua</h3>
+                        <div class="mb-6">
+                            <div class="flex items-center justify-center mb-2"><svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg><span>Senin, 16 Juni 2025</span></div>
+                            <div class="flex items-center justify-center mb-2"><svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg><span>Siang - Malam</span></div>
+                            <div class="flex items-center justify-center mb-4"><svg class="w-5 h-5 text-mint-dark mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg><span>Dsn. Tambakboyo, Ds. Tambakrigadung, Kec. Tikung</span></div>
+                        </div>
+                        <div id="map2" class="map-container mb-4"></div>
+                        <a href="#" id="maps-link2" target="_blank" class="inline-block bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-6 rounded-full transition duration-300">
+                            <div class="flex items-center"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>Buka di Maps</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="py-20 bg-mint-light section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Galeri Foto</h2>
+                <div class="w-32 h-1 bg-mint mx-auto mb-12"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div class="gallery-img rounded-lg overflow-hidden shadow-lg bg-gray-200 h-64 flex items-center justify-center"><span class="text-gray-500">Foto 1</span></div>
+                    <div class="gallery-img rounded-lg overflow-hidden shadow-lg bg-gray-200 h-64 flex items-center justify-center"><span class="text-gray-500">Foto 2</span></div>
+                    <div class="gallery-img rounded-lg overflow-hidden shadow-lg bg-gray-200 h-64 flex items-center justify-center"><span class="text-gray-500">Foto 3</span></div>
+                    <div class="gallery-img rounded-lg overflow-hidden shadow-lg bg-gray-200 h-64 flex items-center justify-center"><span class="text-gray-500">Foto 4</span></div>
+                    <div class="gallery-img rounded-lg overflow-hidden shadow-lg bg-gray-200 h-64 flex items-center justify-center"><span class="text-gray-500">Foto 5</span></div>
+                    <div class="gallery-img rounded-lg overflow-hidden shadow-lg bg-gray-200 h-64 flex items-center justify-center"><span class="text-gray-500">Foto 6</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gift" class="py-20 bg-white section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Kado Pernikahan</h2>
+                <div class="w-32 h-1 bg-mint mx-auto mb-8"></div>
+                <p class="mb-8 max-w-lg mx-auto text-gray-700">Kehadiran Anda adalah hadiah terbaik bagi kami. Namun, jika Anda ingin memberikan kado pernikahan, Anda dapat mengirimkannya melalui:</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <div class="bg-mint-light rounded-lg shadow-xl p-8">
+                        <h3 class="font-playfair text-xl text-mint-dark mb-4">Bank BCA</h3>
+                        <div class="flex justify-center mb-6">
+                            <svg class="qr-code w-40 h-40 text-gray-400" viewBox="0 0 100 100" fill="currentColor"><rect x="10" y="10" width="80" height="80" rx="5"/><text x="50" y="55" font-family="Arial" font-size="10" text-anchor="middle">QR BCA</text></svg>
+                        </div>
+                        <div class="text-center text-gray-700">
+                            <p class="font-medium mb-1">Bank BCA</p>
+                            <p class="text-lg font-bold mb-1">1234567890</p>
+                            <p>a.n. Richo Dion Fathur Rochmi</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-mint-light rounded-lg shadow-xl p-8">
+                        <h3 class="font-playfair text-xl text-mint-dark mb-4">Bank BRI</h3>
+                        <div class="flex justify-center mb-6">
+                             <svg class="qr-code w-40 h-40 text-gray-400" viewBox="0 0 100 100" fill="currentColor"><rect x="10" y="10" width="80" height="80" rx="5"/><text x="50" y="55" font-family="Arial" font-size="10" text-anchor="middle">QR BRI</text></svg>
+                        </div>
+                        <div class="text-center text-gray-700">
+                            <p class="font-medium mb-1">Bank BRI</p>
+                            <p class="text-lg font-bold mb-1">9876543210</p>
+                            <p>a.n. Diana Indah Lestari</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="thanks" class="py-20 bg-mint-light section">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Terima Kasih</h2>
+                <div class="w-32 h-1 bg-mint mx-auto mb-12"></div>
+                
+                <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-xl p-10 relative">
+                    <svg class="heart-decoration heart-1" viewBox="0 0 24 24" fill="#8EDCB5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="heart-decoration heart-2" viewBox="0 0 24 24" fill="#8EDCB5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="heart-decoration heart-3" viewBox="0 0 24 24" fill="#8EDCB5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    <svg class="heart-decoration heart-4" viewBox="0 0 24 24" fill="#8EDCB5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                    
+                    <div class="w-24 h-24 mx-auto mb-6">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50,10 C55,25 75,25 90,30 C75,35 55,35 50,50 C45,35 25,35 10,30 C25,25 45,25 50,10" fill="#8EDCB5" /><circle cx="50" cy="30" r="5" fill="#5DC288" /></svg>
+                    </div>
+                    
+                    <p class="text-lg mb-6 leading-relaxed text-gray-700">Tiada kata yang dapat kami ucapkan selain rasa syukur dan terima kasih yang tak terhingga atas kehadiran, doa restu, dan kasih sayang yang telah Bapak/Ibu/Saudara/i berikan di hari bahagia kami.</p>
+                    <p class="text-lg mb-8 leading-relaxed text-gray-700">Semoga setiap langkah kami ke depan senantiasa diiringi keberkahan dan kebahagiaan, sama seperti kebahagiaan yang kami rasakan saat ini berkat dukungan Anda semua.</p>
+                    
+                    <div class="font-dancing text-3xl text-mint-dark mt-8">Dion & Diana</div>
+                    <div class="w-32 h-1 bg-mint mx-auto mt-6"></div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="py-12 bg-mint-dark text-white text-center">
+            <div class="container mx-auto px-4">
+                <h2 class="font-dancing text-4xl mb-6">Dion & Diana</h2>
+                <p class="mb-8">Terima kasih atas doa dan restu Anda</p>
+                <p class="text-sm opacity-75">© 2025 Dion & Diana Wedding</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Store map instances globally or in a suitable scope
+        let map1, map2; 
+
+        // Function to initialize maps
+        function initMaps() {
+            // Initialize Map 1 (Resepsi Hari Pertama)
+            const map1Container = document.getElementById('map1');
+            if (map1Container && !map1) { // Check if container exists and map not already initialized
+                map1 = L.map('map1').setView([-7.179348, 112.385442], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map1);
+                L.marker([-7.179348, 112.385442]).addTo(map1)
+                    .bindPopup('Lokasi Resepsi Hari Pertama')
+                    .openPopup();
+                // Corrected Google Maps link for location 1
+                document.getElementById('maps-link1').href = 'https://www.google.com/maps?q=-7.179348,112.385442';
+            }
+
+            // Initialize Map 2 (Resepsi Hari Kedua)
+            const map2Container = document.getElementById('map2');
+            if (map2Container && !map2) { // Check if container exists and map not already initialized
+                map2 = L.map('map2').setView([-7.135076, 112.427848], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map2);
+                L.marker([-7.135076, 112.427848]).addTo(map2)
+                    .bindPopup('Lokasi Resepsi Hari Kedua')
+                    .openPopup();
+                // Corrected Google Maps link for location 2
+                document.getElementById('maps-link2').href = 'https://www.google.com/maps?q=-7.135076,112.427848';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parse URL parameters for guest name
+            const urlParams = new URLSearchParams(window.location.search);
+            const guestNameParam = urlParams.get('to');
+            if (guestNameParam) {
+                // Decode URI component and replace '+' with space for proper display
+                document.getElementById('guest-name').textContent = decodeURIComponent(guestNameParam.replace(/\+/g, ' '));
+            }
+            
+            const cover = document.getElementById('cover');
+            const mainContent = document.getElementById('main-content');
+            const openInvitationButton = document.getElementById('open-invitation');
+
+            // Open invitation button
+            openInvitationButton.addEventListener('click', function() {
+                cover.style.opacity = '0';
+                setTimeout(function() {
+                    cover.style.display = 'none';
+                    mainContent.classList.remove('hidden');
+                    
+                    // Initialize maps AFTER main content is visible.
+                    // Map 1 (default tab) should render correctly.
+                    // Map 2 (in hidden tab) will be initialized but might need invalidateSize when its tab is shown.
+                    initMaps(); 
+                    
+                    // Initialize scroll animation for sections
+                    const sections = document.querySelectorAll('.section');
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible');
+                            }
+                        });
+                    }, { threshold: 0.1 });
+                    
+                    sections.forEach(section => {
+                        observer.observe(section);
+                    });
+                }, 1000); // Duration of cover fade-out
+            });
+            
+            // Countdown timer
+            const weddingDate = new Date('June 15, 2025 09:00:00').getTime();
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = weddingDate - now;
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    // Optionally, display a message like "Acara Telah Berlangsung"
+                    document.getElementById('countdown').innerHTML = '<p class="text-xl text-gray-700">Acara Telah Berlangsung</p>';
+                }
+            }
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Initial call
+            
+            // Tab navigation
+            const tabDay1 = document.getElementById('tab-day1');
+            const tabDay2 = document.getElementById('tab-day2');
+            const contentDay1 = document.getElementById('content-day1');
+            const contentDay2 = document.getElementById('content-day2');
+            
+            tabDay1.addEventListener('click', function() {
+                tabDay1.classList.add('tab-active');
+                tabDay1.classList.remove('bg-gray-100', 'text-gray-700');
+                tabDay2.classList.remove('tab-active');
+                tabDay2.classList.add('bg-gray-100', 'text-gray-700');
+                contentDay1.classList.remove('hidden');
+                contentDay2.classList.add('hidden');
+                if (map1) {
+                    map1.invalidateSize(); // Ensure map1 resizes correctly if needed
+                }
+            });
+            
+            tabDay2.addEventListener('click', function() {
+                tabDay2.classList.add('tab-active');
+                tabDay2.classList.remove('bg-gray-100', 'text-gray-700');
+                tabDay1.classList.remove('tab-active');
+                tabDay1.classList.add('bg-gray-100', 'text-gray-700');
+                contentDay2.classList.remove('hidden');
+                contentDay1.classList.add('hidden');
+                
+                // CRITICAL: Invalidate map2 size AFTER its container (contentDay2) is made visible.
+                if (map2) {
+                    map2.invalidateSize();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
