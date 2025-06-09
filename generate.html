@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Pesan Undangan</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+                Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1c1e21;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #4b4f56;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1877f2;
+            box-shadow: 0 0 0 2px rgba(24, 119, 242, 0.2);
+        }
+
+        textarea {
+            width: 100%;
+            height: 350px;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+            resize: vertical;
+            box-sizing: border-box;
+            background-color: #f5f6f7;
+            color: #333;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        button:hover {
+            background-color: #166fe5;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Generator Pesan Undangan</h1>
+        
+        <div class="input-group">
+            <label for="guestNameInput">Nama Tamu:</label>
+            <input type="text" id="guestNameInput" placeholder="Contoh: Mas Chanif dan Keluarga">
+        </div>
+        
+        <div class="input-group">
+            <label for="generatedText">Teks Undangan:</label>
+            <textarea id="generatedText" readonly></textarea>
+        </div>
+        
+        <div class="button-container">
+            <button id="copyButton">Salin Teks</button>
+        </div>
+    </div>
+
+    <script>
+        // Memilih elemen dari DOM
+        const guestNameInput = document.getElementById('guestNameInput');
+        const generatedText = document.getElementById('generatedText');
+        const copyButton = document.getElementById('copyButton');
+
+        // Fungsi untuk membuat teks undangan
+        function generateInvitationText() {
+            // Ambil nama tamu dari input, jika kosong beri placeholder
+            const guestName = guestNameInput.value.trim() || '[Nama Tamu]';
+            
+            // Encode nama tamu untuk dimasukkan ke dalam URL
+            const encodedGuestName = encodeURIComponent(guestName);
+
+            // Template pesan undangan
+            const template = `Assalamu'alaikum Wr. Wb.
+
+Kepada
+Yth. ${guestName}
+
+Bismillahirahmanirrahim.
+Maha Suci Allah yang telah menjadikan segala sesuatu lebih indah dan sempurna.
+
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i teman sekaligus sahabat, untuk menghadiri acara kami.
+
+Berikut link undangan kami,
+untuk info lengkap dari acara bisa kunjungi :
+
+https://diondiana.github.io/?to=${encodedGuestName}
+
+Merupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan untuk hadir dan memberikan doa restu. 
+
+Mohon maaf perihal undangan hanya di bagikan melalui pesan ini. 
+
+Terima Kasih.
+Wassalamu'alaikum Wr. Wb.`;
+
+            // Masukkan template ke dalam textarea
+            generatedText.value = template;
+        }
+
+        // Fungsi untuk menyalin teks ke clipboard
+        function copyText() {
+            // Pilih teks di dalam textarea
+            generatedText.select();
+            generatedText.setSelectionRange(0, 99999); // Untuk mobile
+
+            // Salin teks menggunakan Clipboard API modern
+            navigator.clipboard.writeText(generatedText.value).then(() => {
+                // Beri feedback visual ke pengguna
+                const originalButtonText = copyButton.textContent;
+                copyButton.textContent = 'Tersalin!';
+                copyButton.style.backgroundColor = '#2ab749'; // Warna hijau
+
+                // Kembalikan teks tombol setelah 2 detik
+                setTimeout(() => {
+                    copyButton.textContent = originalButtonText;
+                    copyButton.style.backgroundColor = '#1877f2'; // Warna biru
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin teks: ', err);
+                alert('Gagal menyalin teks. Silakan coba salin manual.');
+            });
+        }
+
+        // Event listener untuk input nama tamu
+        guestNameInput.addEventListener('input', generateInvitationText);
+
+        // Event listener untuk tombol salin
+        copyButton.addEventListener('click', copyText);
+
+        // Panggil fungsi sekali saat halaman pertama kali dimuat
+        generateInvitationText();
+    </script>
+
+</body>
+</html>
