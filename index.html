@@ -286,31 +286,41 @@
             </div>
         </section>
 
-        <section id="gift" class="py-20 bg-white section">
-            <div class="container mx-auto px-4 text-center">
-                <h2 class="font-dancing text-4xl mb-2 text-mint-dark">Kado Pernikahan</h2>
-                <div class="w-32 h-1 bg-mint mx-auto mb-8"></div>
-                <p class="mb-8 max-w-lg mx-auto text-gray-700">Kehadiran Anda adalah hadiah terbaik bagi kami. Namun, jika Anda ingin memberikan kado pernikahan, Anda dapat mengirimkannya melalui:</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    <div class="bg-mint-light rounded-lg shadow-xl p-8">
-                        <h3 class="font-playfair text-xl text-mint-dark mb-4">Bank BCA</h3>
-                        <div class="text-center text-gray-700">
-                            <p class="text-lg font-bold mb-1">3300-85-1133</p>
-                            <p>a.n. Richo Dion Fathur Rochmi</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-mint-light rounded-lg shadow-xl p-8">
-                        <h3 class="font-playfair text-xl text-mint-dark mb-4">Bank BRI</h3>
-                        <div class="text-center text-gray-700">
-                            <p class="text-lg font-bold mb-1">6316-0101-9536-534</p>
-                            <p>a.n. Diana Indah Lestari</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+		<section id="gift" class="py-20 bg-white section">
+			<div class="container mx-auto px-4 text-center">
+				<h2 class="font-dancing text-4xl mb-2 text-mint-dark">Kado Pernikahan</h2>
+				<div class="w-32 h-1 bg-mint mx-auto mb-8"></div>
+				<p class="mb-8 max-w-lg mx-auto text-gray-700">Kehadiran Anda adalah hadiah terbaik bagi kami. Namun, jika Anda ingin memberikan kado pernikahan, Anda dapat mengirimkannya melalui:</p>
+				
+				<div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+					<div class="bg-mint-light rounded-lg shadow-xl p-8 flex flex-col justify-between">
+						<div>
+							<h3 class="font-playfair text-xl text-mint-dark mb-4">Bank BCA</h3>
+							<div class="text-center text-gray-700">
+								<p id="bca-account" class="text-lg font-bold mb-1">3300-85-1133</p>
+								<p>a.n. Richo Dion Fathur Rochmi</p>
+							</div>
+						</div>
+						<button onclick="copyToClipboard('bca-account', this)" class="mt-4 bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-4 rounded-full text-sm transition duration-300 self-center">
+							Salin Nomor Rekening
+						</button>
+					</div>
+					
+					<div class="bg-mint-light rounded-lg shadow-xl p-8 flex flex-col justify-between">
+						<div>
+							<h3 class="font-playfair text-xl text-mint-dark mb-4">Bank BRI</h3>
+							<div class="text-center text-gray-700">
+								<p id="bri-account" class="text-lg font-bold mb-1">6316-0101-9536-534</p>
+								<p>a.n. Diana Indah Lestari</p>
+							</div>
+						</div>
+						<button onclick="copyToClipboard('bri-account', this)" class="mt-4 bg-mint hover:bg-mint-dark text-white font-semibold py-2 px-4 rounded-full text-sm transition duration-300 self-center">
+							Salin Nomor Rekening
+						</button>
+					</div>
+				</div>
+			</div>
+		</section>
 
         <section id="thanks" class="py-20 bg-mint-light section">
             <div class="container mx-auto px-4 text-center">
@@ -336,13 +346,17 @@
             </div>
         </section>
 
-        <footer class="py-12 bg-mint-dark text-white text-center">
-            <div class="container mx-auto px-4">
-                <h2 class="font-dancing text-4xl mb-6">Dion & Diana</h2>
-                <p class="mb-8">Terima kasih atas doa dan restu Anda</p>
-                <p class="text-sm opacity-75">© 2025 Dion & Diana Wedding</p>
-            </div>
-        </footer>
+		<footer class="py-12 bg-mint-dark text-white text-center">
+			<div class="container mx-auto px-4">
+				<p class="mb-8">Dengan Penuh Cinta,</p>
+				<h2 class="font-dancing text-4xl mb-6">Dion & Diana</h2>
+
+				<p class="text-sm opacity-75">
+					Build with <span class="text-mint-light">&hearts;</span> by 
+					<a href="https://chanif.github.io/" target="_blank" rel="noopener noreferrer" class="font-semibold hover:text-mint-light transition-colors">Chanif</a>
+				</p>
+			</div>
+		</footer>
     </div>
 
     <script>
@@ -379,6 +393,31 @@
                 document.getElementById('maps-link2').href = 'https://www.google.com/maps?q=-7.135076,112.427848';
             }
         }
+
+		// Fungsi untuk menyalin teks ke clipboard
+		function copyToClipboard(elementId, buttonElement) {
+			const accountNumberEl = document.getElementById(elementId);
+			if (!accountNumberEl) return;
+
+			// Menghapus tanda hubung '-' dari nomor rekening sebelum menyalin
+			const accountNumber = accountNumberEl.textContent.replace(/-/g, '');
+
+			navigator.clipboard.writeText(accountNumber).then(() => {
+				// Beri feedback visual kepada pengguna
+				const originalText = buttonElement.innerHTML;
+				buttonElement.innerHTML = 'Berhasil Disalin!';
+				buttonElement.disabled = true;
+
+				// Kembalikan teks tombol setelah 2 detik
+				setTimeout(() => {
+					buttonElement.innerHTML = originalText;
+					buttonElement.disabled = false;
+				}, 2000);
+			}).catch(err => {
+				console.error('Gagal menyalin teks: ', err);
+				alert('Gagal menyalin. Silakan salin secara manual.');
+			});
+		}
 
         document.addEventListener('DOMContentLoaded', function() {
             // Parse URL parameters for guest name
@@ -478,6 +517,7 @@
                 }
             });
         });
-    </script>
+    
+	</script>
 </body>
 </html>
