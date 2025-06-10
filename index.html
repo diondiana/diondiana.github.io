@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light"> <!-- TAMBAHAN: Paksa mode terang -->
 	
 	<link rel="apple-touch-icon" href="images/favicon.jpg">
     <link rel="icon" href="images/favicon.jpg">
@@ -45,6 +46,7 @@
     <style>
         html {
             scroll-behavior: smooth;
+            color-scheme: light; /* TAMBAHAN: Paksa mode terang */
         }
         body {
             background-color: #FFF9F0; /* cream */
@@ -123,12 +125,10 @@
 </head>
 <body class="bg-cream text-gray-800">
 
-    <!-- ===== AUDIO PLAYER TAMBAHAN ===== -->
     <audio id="background-music" loop>
         <source src="audio/river_flows_in_you.mp3" type="audio/mpeg">
         Browser Anda tidak mendukung elemen audio.
     </audio>
-    <!-- ===== AKHIR AUDIO PLAYER ===== -->
 
     <div id="cover" class="fixed inset-0 z-50 bg-mint-light flex flex-col items-center justify-center transition-all duration-1000">
         <div class="text-center p-6 max-w-md">
@@ -376,13 +376,11 @@
 		</footer>
     </div>
     
-    <!-- ===== TOMBOL KONTROL MUSIK TAMBAHAN ===== -->
     <div id="music-control" class="fixed bottom-5 right-5 z-50">
         <button id="toggle-music" class="w-12 h-12 bg-mint rounded-full flex items-center justify-center text-white shadow-lg focus:outline-none">
             <!-- Ikon akan diisi oleh JavaScript -->
         </button>
     </div>
-    <!-- ===== AKHIR TOMBOL KONTROL MUSIK ===== -->
 
 
     <script>
@@ -458,7 +456,7 @@
             const mainContent = document.getElementById('main-content');
             const openInvitationButton = document.getElementById('open-invitation');
 
-            // ===== KODE JAVASCRIPT MUSIK TAMBAHAN =====
+            // ===== KODE JAVASCRIPT MUSIK =====
             const backgroundMusic = document.getElementById('background-music');
             const musicControlButton = document.getElementById('toggle-music');
             const musicControlContainer = document.getElementById('music-control');
@@ -489,14 +487,12 @@
             openInvitationButton.addEventListener('click', function() {
                 cover.style.opacity = '0';
                 
-                // (TAMBAHAN) Putar musik & tampilkan tombol saat undangan dibuka
-                // Penanganan error sederhana jika audio gagal diputar
+                // Putar musik & tampilkan tombol saat undangan dibuka
                 backgroundMusic.play().then(() => {
                     isPlaying = true;
                     musicControlContainer.style.display = 'block';
                 }).catch(error => {
                     console.log("Autoplay musik diblokir oleh browser. Interaksi diperlukan.");
-                    // Tombol tetap muncul, pengguna bisa klik manual
                     isPlaying = false;
                     musicControlButton.innerHTML = iconPlay;
                     musicControlContainer.style.display = 'block';
@@ -523,7 +519,6 @@
                 }, 1000); // Duration of cover fade-out
             });
             
-            // (TAMBAHAN) Event listener untuk tombol kontrol musik
             musicControlButton.addEventListener('click', toggleMusic);
             
             // Countdown timer
@@ -544,7 +539,6 @@
 
                 if (distance < 0) {
                     clearInterval(countdownInterval);
-                    // Optionally, display a message like "Acara Telah Berlangsung"
                     document.getElementById('countdown').innerHTML = '<p class="text-xl text-gray-700">Acara Telah Berlangsung</p>';
                 }
             }
@@ -565,7 +559,7 @@
                 contentDay1.classList.remove('hidden');
                 contentDay2.classList.add('hidden');
                 if (map1) {
-                    map1.invalidateSize(); // Ensure map1 resizes correctly if needed
+                    map1.invalidateSize();
                 }
             });
             
@@ -577,7 +571,6 @@
                 contentDay2.classList.remove('hidden');
                 contentDay1.classList.add('hidden');
                 
-                // CRITICAL: Invalidate map2 size AFTER its container (contentDay2) is made visible.
                 if (map2) {
                     map2.invalidateSize();
                 }
